@@ -93,7 +93,9 @@ extern "C" {
 #undef __stdcall
 #define __stdcall
 
+#ifndef __MSYSWINE__
 #define __cdecl
+#endif
 #define __ms_va_list va_list
 #endif
 

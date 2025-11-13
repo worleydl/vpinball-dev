@@ -16,7 +16,13 @@
 #include "vbscript.h"
 
 #include <dirent.h>
+#ifndef __MSYSWINE__
 #include <fnmatch.h>
+#else
+typedef int WINBOOL;
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+#endif
 
 #undef wcsncpy
 
@@ -1085,7 +1091,11 @@ BOOL WINAPI CreateDirectoryW(LPCWSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurit
          szPathName[i] = '/';
    }
 
+#ifndef __MSYSWINE__
    return mkdir(szPathName, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) == 0;
+#else
+   return mkdir(szPathName) == 0;
+#endif
 }
 
 HANDLE WINAPI CreateFileW(LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
@@ -1235,7 +1245,11 @@ HANDLE WINAPI FindFirstFileW(LPCWSTR lpFileName, LPWIN32_FIND_DATAW lpFindFileDa
    struct dirent *entry;
    while ((entry = readdir(dir)) != NULL) {
       if (entry->d_name[0] == '.') continue;
+#ifndef __MSYSWINE__
       if (fnmatch(handle->pattern, entry->d_name, 0) != 0) continue;
+#else
+      if (!PathMatchSpecA(entry->d_name, handle->pattern)) continue;
+#endif
 
       fill_find_data(entry->d_name, lpFindFileData);
       return (HANDLE)handle;
@@ -1255,7 +1269,11 @@ BOOL WINAPI FindNextFileW(HANDLE hFindFile, LPWIN32_FIND_DATAW lpFindFileData)
    struct dirent *entry;
    while ((entry = readdir(handle->dir)) != NULL) {
       if (entry->d_name[0] == '.') continue;
+#ifndef __MSYSWINE__
       if (fnmatch(handle->pattern, entry->d_name, 0) != 0) continue;
+#else
+      if (!PathMatchSpecA(entry->d_name, handle->pattern)) continue;
+#endif
 
       fill_find_data(entry->d_name, lpFindFileData);
       return TRUE;
