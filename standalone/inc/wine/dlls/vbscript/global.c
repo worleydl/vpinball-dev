@@ -703,7 +703,10 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
         hres = Dictionary_CreateInstance(cf, NULL, &IID_IUnknown, (void**)&obj);
     }
     else {
-        hres = external_create_object(progid, cf, (IUnknown*)&obj);
+	// DLW: [HACK] should I setup a shim area that the exe and wine can sync up?
+	// shortcut to CLASS_E_CLASSNOTAVAILABLE, missing helpful message
+        //hres = external_create_object(progid, cf, (IUnknown*)&obj);
+	hres = CLASS_E_CLASSNOTAVAILABLE;
     }
 #endif
     if(FAILED(hres))
