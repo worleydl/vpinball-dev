@@ -62,7 +62,7 @@ public:
       value = val;
       return hr;
    }
-#ifndef __STANDALONE__
+#if !defined(__STANDALONE__) || defined(__STANDALONE_WIN__)
    HRESULT GetInt(COLORREF &value)
    {
       int val;

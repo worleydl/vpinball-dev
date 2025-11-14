@@ -27,7 +27,7 @@
 
 #include <mmsystem.h>
 
-#ifndef __STANDALONE__
+#if !defined(__STANDALONE__) || defined(__STANDALONE_WIN__)
 #include <atlbase.h>
 #include <atlctl.h>
 #else
@@ -147,7 +147,7 @@ static const string defaultPathSearch[] = { string(), "user"s +PATH_SEPARATOR_CH
 #define localtime_s(x, y) localtime_r(y, x)
 #define gmtime_s(x, y) gmtime_r(y, x)
 
-#define _aligned_malloc(size, align) aligned_alloc(align, size)
+//#define _aligned_malloc(size, align) aligned_alloc(align, size)
 #define _aligned_free free
 
 #define strnlen_s strnlen
@@ -200,7 +200,7 @@ class SCNotification final { };
 
 #include "utils/Logger.h"
 
-#ifdef __STANDALONE__
+#if defined(__STANDALONE__) && !defined(__STANDALONE_WIN__)
 #include "standalone/inc/atl/atldef.h"
 #include "standalone/inc/atl/atlbase.h"
 #include "standalone/inc/atl/atlcom.h"
@@ -215,6 +215,14 @@ class SCNotification final { };
 #include "standalone/inc/win32xx/win32xx.h"
 
 #include <cstdint>
+#elif defined(__STANDALONE_WIN__)
+#include "standalone/inc/atlmfc/afx.h"
+#include "standalone/inc/atlmfc/afxdlgs.h"
+#include "standalone/inc/atlmfc/afxwin.h"
+#include "standalone/inc/atlmfc/atltypes.h"
+
+
+#include "standalone/inc/win32xx/win32xx.h"
 #endif
 
 #include "def.h"

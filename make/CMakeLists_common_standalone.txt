@@ -34,7 +34,7 @@ set_source_files_properties(${WINE_SOURCES} PROPERTIES
 
 set(VPX_STANDALONE_SOURCES
    ${VPX_SOURCES}
-   ${WINE_SOURCES}
+   #${WINE_SOURCES}
 
    standalone/vpinball_standalone_i.c
    standalone/vpinball_standalone_i.h

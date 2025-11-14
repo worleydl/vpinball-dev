@@ -316,7 +316,7 @@ char *MakeChar(const WCHAR* const wz)
 
 HRESULT OpenURL(const string& szURL)
 {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__STANDALONE_WIN__)
    IUniformResourceLocator* pURL;
 
    HRESULT hres = CoCreateInstance(CLSID_InternetShortcut, nullptr, CLSCTX_INPROC_SERVER, IID_IUniformResourceLocator, (void**)&pURL);

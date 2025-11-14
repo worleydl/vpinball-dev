@@ -11,6 +11,12 @@
 #include "lib/src/VPinballLib.h"
 #endif
 
+#ifdef __STANDALONE_WIN__
+#undef DEFINE_GUID;
+// DLW: taken from wine guidef.h
+#define DEFINE_GUID(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) EXTERN_C const GUID name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
+#endif
+
 // The GUID used to identify the coclass of the VB Script engine
 //  {B54F3741-5B07-11cf-A4B0-00AA004A55E8}
 #define szCLSID_VBScript "{B54F3741-5B07-11cf-A4B0-00AA004A55E8}"
@@ -651,9 +657,25 @@ HRESULT CodeViewer::ReplaceName(IScriptable *const piscript, const wstring &wzNe
    return S_OK;
 }
 
+// todo: put somewhere cleaner
+#ifdef __STANDALONE_WIN__
+extern "C" 
+{
+   __declspec(dllimport) HRESULT WINAPI wine_CoCreateInstance(REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID *);
+   __declspec(dllimport) HRESULT WINAPI wine_CoCreateInstanceEx(REFCLSID, LPUNKNOWN, DWORD, COSERVERINFO *, ULONG, MULTI_QI *);
+}
+
+
+#endif
+
 STDMETHODIMP CodeViewer::InitializeScriptEngine()
 {
+#ifndef __STANDALONE_WIN__
 	const HRESULT vbScriptResult = CoCreateInstance(CLSID_VBScript, 0, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER/*CLSCTX_INPROC_SERVER*/, IID_IActiveScriptParse, (LPVOID*)&m_pScriptParse); //!! CLSCTX_INPROC_SERVER good enough?!
+#else
+	const HRESULT vbScriptResult = wine_CoCreateInstance(CLSID_VBScript, 0, CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER/*CLSCTX_INPROC_SERVER*/, IID_IActiveScriptParse, (LPVOID*)&m_pScriptParse); //!! CLSCTX_INPROC_SERVER good enough?!
+#endif
+
 	if (vbScriptResult != S_OK) return vbScriptResult;
 
 #ifndef __STANDALONE__

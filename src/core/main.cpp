@@ -261,4 +261,21 @@ int main(int argc, char** argv) {
    g_argv = argv;
    return WinMain(NULL, NULL, NULL, 0);
 }
+#elif __STANDALONE_WIN__
+extern int g_argc;
+extern char **g_argv;
+
+#include <atlbase.h>
+class CMyModule : public ATL::CAtlExeModuleT<CMyModule>
+{
+};
+CMyModule _AtlModule;
+int main(int argc, char** argv) {
+   g_argc = argc;
+   g_argv = argv;
+
+   HRESULT hr = _AtlModule.WinMain(0);
+   return WinMain(NULL, NULL, NULL, 0);
+}
+
 #endif

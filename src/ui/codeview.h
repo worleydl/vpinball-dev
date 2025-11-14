@@ -46,7 +46,7 @@ public:
 
 class CodeViewer;
 
-#ifdef __STANDALONE__
+#if defined(__STANDALONE__) && !defined(__STANDALONE_WIN__)
 class IProcessDebugManager { };
 #endif
 

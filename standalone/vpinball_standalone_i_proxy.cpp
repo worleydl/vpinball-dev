@@ -2,6 +2,11 @@
 #include "core/ScriptGlobalTable.h"
 #include "olectl.h"
 
+#ifdef __STANDALONE_WIN__
+// This usually comes from wine winnt.h but we're avoiding inclusion of that here (for now)
+# define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#endif
+
 STDMETHODIMP Collection::GetIDsOfNames(REFIID /*riid*/, LPOLESTR* rgszNames, UINT cNames, LCID lcid, DISPID* rgDispId) {
 	static struct {
 		const WCHAR *name;

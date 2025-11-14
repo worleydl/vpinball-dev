@@ -194,7 +194,7 @@ void VPinball::GetMyPath()
 string VPinball::GetDefaultPrefPath()
 {
    string path;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__STANDALONE_WIN__)
    // Use standard Windows AppData directory (to avoid requesting write permissions, and behave correctly for Windows restore,...)
    // That would look something like: "C:\Users\bob\AppData\Roaming\VPinballX\"
    path = string(GetAppDataPath()) + PATH_SEPARATOR_CHAR + "VPinballX" + PATH_SEPARATOR_CHAR;
@@ -206,7 +206,7 @@ string VPinball::GetDefaultPrefPath()
    char *szPrefPath = SDL_GetPrefPath("../..", "Documents");
    path = szPrefPath;
    SDL_free(szPrefPath);
-#elif defined(__APPLE__) && defined(TARGET_OS_TV) && TARGET_OS_TV
+#elif (defined(__APPLE__) && defined(TARGET_OS_TV) && TARGET_OS_TV) || defined(__STANDALONE_WIN__)
    char *szPrefPath = SDL_GetPrefPath(NULL, "Documents");
    path = szPrefPath;
    SDL_free(szPrefPath);
