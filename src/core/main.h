@@ -148,7 +148,9 @@ static const string defaultPathSearch[] = { string(), "user"s +PATH_SEPARATOR_CH
 #define gmtime_s(x, y) gmtime_r(y, x)
 
 //#define _aligned_malloc(size, align) aligned_alloc(align, size)
+#ifndef __STANDALONE_WIN__
 #define _aligned_free free
+#endif
 
 #define strnlen_s strnlen
 #define sprintf_s snprintf

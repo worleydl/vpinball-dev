@@ -426,7 +426,7 @@ Class cvpmTrough
 	Public Property Let StackExitBalls(n) : mStackExitBalls = vpMax(1, n) : End Property
 
 	Public Sub InitExit(aKicker, aDir, aForce)
-		If TypeName(aKicker) <> "Kicker" Then
+		If TypeName(aKicker) <> "Kicker" And TypeName(aKicker) <> "IKicker" Then
 			Err.Raise 17, "cvpmTrough.InitExit: Cannot use object of type '" & TypeName(aKicker) & "'."
 		End If
 
@@ -737,7 +737,7 @@ Class cvpmSaucer
 	' Initialization
 
 	Public Sub InitKicker(aKicker, aSw, aDir, aForce, aZForce)
-		If TypeName(aKicker) <> "Kicker" Then
+		If TypeName(aKicker) <> "Kicker" And TypeName(aKicker) <> "IKicker" Then
 			Err.Raise 17, "cvpmSaucer.InitKicker: Cannot use object of type '" & TypeName(aKicker) & "'."
 		End If
 
