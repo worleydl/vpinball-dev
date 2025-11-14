@@ -155,3 +155,79 @@ void external_log_info(const char* format, ...)
 {
    return;
 }
+
+// Cocreateinstance stuff
+WINOLE32API HRESULT WINAPI wine_CoCreateInstance(REFCLSID,LPUNKNOWN,DWORD,REFIID,LPVOID*);
+WINOLE32API HRESULT WINAPI wine_CoCreateInstanceEx(REFCLSID,LPUNKNOWN,DWORD,COSERVERINFO*,ULONG,MULTI_QI*);
+
+static void init_multi_qi(DWORD count, MULTI_QI *mqi, HRESULT hr)
+{
+   ULONG i;
+
+   for (i = 0; i < count; i++)
+   {
+      mqi[i].pItf = NULL;
+      mqi[i].hr = hr;
+   }
+}
+
+static HRESULT return_multi_qi(IUnknown *unk, DWORD count, MULTI_QI *mqi, BOOL include_unk)
+{
+   ULONG index = 0, fetched = 0;
+
+   if (include_unk) {
+      mqi[0].hr = S_OK;
+      mqi[0].pItf = unk;
+      index = fetched = 1;
+   }
+
+   for (; index < count; index++) {
+      mqi[index].hr = IUnknown_QueryInterface(unk, mqi[index].pIID, (void **)&mqi[index].pItf);
+      if (mqi[index].hr == S_OK)
+         fetched++;
+   }
+
+   if (!include_unk)
+      IUnknown_Release(unk);
+
+   if (fetched == 0)
+      return E_NOINTERFACE;
+
+   return fetched == count ? S_OK : CO_S_NOTALLINTERFACES;
+}
+
+
+
+HRESULT WINAPI wine_CoCreateInstance(REFCLSID rclsid, IUnknown *outer, DWORD cls_context, REFIID riid, void **obj)
+{
+   MULTI_QI multi_qi = { .pIID = riid };
+   HRESULT hr;
+
+   if (!obj)
+      return E_POINTER;
+
+   hr = wine_CoCreateInstanceEx(rclsid, outer, cls_context, NULL, 1, &multi_qi);
+   *obj = multi_qi.pItf;
+   return hr;
+}
+
+HRESULT WINAPI wine_CoCreateInstanceEx(REFCLSID rclsid, IUnknown *outer, DWORD cls_context, COSERVERINFO *server_info, ULONG count, MULTI_QI *results)
+{
+   IClassFactory *factory;
+   IUnknown *unk = NULL;
+   HRESULT hr;
+
+   if (!count || !results)
+      return E_INVALIDARG;
+
+   init_multi_qi(count, results, E_NOINTERFACE);
+
+   hr = VBScriptFactory_CreateInstance(factory, outer, results[0].pIID, (void **)&unk);
+
+   if (FAILED(hr))
+      return hr;
+
+   return return_multi_qi(unk, count, results, TRUE);
+}
+
+
