@@ -10,7 +10,7 @@
 #ifdef EXT_CAPTURE
 #include "renderer/captureExt.h"
 #endif
-#ifndef __STANDALONE__
+#if !defined(__STANDALONE__) || defined(__STANDALONE_WIN__)
 #include <atlsafe.h>
 #endif
 
@@ -18,7 +18,6 @@
 
 #include "serial.h"
 static serial Serial;
-
 
 ScriptGlobalTable::~ScriptGlobalTable()
 {
@@ -1098,7 +1097,7 @@ STDMETHODIMP ScriptGlobalTable::put_DisableStaticPrerendering(VARIANT_BOOL newVa
 
 STDMETHODIMP ScriptGlobalTable::GetBalls(LPSAFEARRAY *pVal)
 {
-   if (!pVal || !g_pplayer)
+   if (!pVal || !g_pplayer) 
       return E_POINTER;
 
    CComSafeArray<VARIANT> balls((ULONG)g_pplayer->m_vball.size());

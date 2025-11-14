@@ -38,11 +38,11 @@ add_executable(vpinball
 target_include_directories(vpinball PUBLIC
    ${CMAKE_SOURCE_DIR}/third-party/include
    ${CMAKE_SOURCE_DIR}
-   standalone/inc/wine/include
-   standalone/inc/wine/dlls/atl
+   #standalone/inc/wine/include
+   #standalone/inc/wine/dlls/atl
    standalone/inc/wine/dlls/vbscript
-   standalone/inc/wine/dlls/oleaut32
-   standalone/inc/wine/dlls/kernelbase
+   #standalone/inc/wine/dlls/oleaut32
+   #standalone/inc/wine/dlls/kernelbase
    media
    pin
    src
@@ -51,22 +51,24 @@ target_include_directories(vpinball PUBLIC
 
 # todo: review
 target_precompile_headers(vpinball PUBLIC
-   src/core/stdafx.h
+   #src/core/stdafx.h
+   $<$<COMPILE_LANGUAGE:CXX>:src/core/stdafx.h>
 )
 
 target_compile_definitions(vpinball PRIVATE
    __STANDALONE__
+   __STANDALONE_WIN__
 
    ENABLE_BGFX
 
    # For wine winnt cpu context
-   __x86_64__
+   #__x86_64__
 
-   __WINESRC__
-   WINE_UNICODE_NATIVE
+   #__WINESRC__
+   #WINE_UNICODE_NATIVE
 
-   WINE_NO_TRACE_MSGS
-   WINE_NO_DEBUG_MSGS
+   #WINE_NO_TRACE_MSGS
+   #WINE_NO_DEBUG_MSGS
 
    $<$<CONFIG:Debug>:BX_CONFIG_DEBUG=1>
    $<$<CONFIG:Release>:BX_CONFIG_DEBUG=0>
@@ -93,7 +95,7 @@ target_compile_options(vpinball PUBLIC
 )
 
 target_link_directories(vpinball PUBLIC
-   ${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64
+   ${CMAKE_SOURCE_DIR}/third-party/build-libs/windows-x64
 )
 
 target_link_libraries(vpinball
@@ -106,10 +108,15 @@ target_link_libraries(vpinball
    setupapi.lib
 #  openxr_loader64.lib
    SDL364.lib
+   SDL3_image64.lib
+   SDL3_ttf64.lib
 #  dinput8.lib # maybe still needed? will check...
    bgfx64.lib
    bimg64.lib
    bx64.lib
+   hid.lib
+   hidapi64.lib
+   ${CMAKE_SOURCE_DIR}/experimental/libvbscript.dll.a
 )
 
 set_target_properties(vpinball PROPERTIES
@@ -129,6 +136,12 @@ add_custom_command(TARGET vpinball POST_BUILD
    COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/openxr_loader64.dll" "$<TARGET_FILE_DIR:vpinball>"
    COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/SciLexerVP64.dll" "$<TARGET_FILE_DIR:vpinball>"
    COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/SDL364.dll" "$<TARGET_FILE_DIR:vpinball>"
+
+   COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/SDL3_image64.dll" "$<TARGET_FILE_DIR:vpinball>"
+   COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/SDL3_ttf64.dll" "$<TARGET_FILE_DIR:vpinball>"
+   COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/third-party/runtime-libs/windows-x64/hidapi64.dll" "$<TARGET_FILE_DIR:vpinball>"
+   COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/experimental/libvbscript.dll" "$<TARGET_FILE_DIR:vpinball>"
+   COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/experimental/libvbscript.pdb" "$<TARGET_FILE_DIR:vpinball>"
 )
 
 set(PluginPlatform "windows")

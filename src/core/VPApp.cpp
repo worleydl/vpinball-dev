@@ -362,10 +362,19 @@ void showDisplayIDs()
    }
    SDL_HideCursor();
 
+#ifndef __STANDALONE_WIN__
    int displayCount;
    SDL_DisplayID* pDisplays = SDL_GetDisplays(&displayCount);
    SDL_Window* pWindows[displayCount];
    SDL_Renderer* pRenderers[displayCount];
+#else
+   // WIN32 build needs a constant for array size
+   const int displayCount = 1;
+   int tmpDisplayCount = 1;
+   SDL_DisplayID* pDisplays = SDL_GetDisplays(&tmpDisplayCount);
+   SDL_Window* pWindows[displayCount];
+   SDL_Renderer* pRenderers[displayCount];
+#endif
 
    for (int i = 0; i < displayCount; i++) {
       // get bounds and create windows on each display
@@ -449,7 +458,7 @@ VPApp::VPApp(HINSTANCE hInstance)
 
    IsOnWine(); // init static variable in there
 
-   #ifdef _MSC_VER
+   #if defined(_MSC_VER) && !defined(__STANDALONE_WIN__)
       // disable auto-rotate on tablets
       #if (_WIN32_WINNT <= 0x0601)
          SetDisplayAutoRotationPreferences = (pSDARP)GetProcAddress(GetModuleHandle(TEXT("user32.dll")), "SetDisplayAutoRotationPreferences");
@@ -587,7 +596,9 @@ string VPApp::GetPathFromArg(const string& arg, bool setCurrentPath)
       SetCurrentDirectory(dir.c_str());
    }
 
-   #ifdef __STANDALONE__
+   #ifdef __STANDALONE_WIN__
+      path = std::filesystem::weakly_canonical(std::filesystem::path(path)).string();
+   #elif __STANDALONE__
       path = std::filesystem::weakly_canonical(std::filesystem::path(path));
    #endif
 

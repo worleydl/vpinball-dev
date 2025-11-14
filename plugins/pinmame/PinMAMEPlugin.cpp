@@ -435,7 +435,9 @@ MSGPI_EXPORT void MSGPIAPI PinMAMEPluginLoad(const uint32_t sessionId, const Msg
             pinmamePath = string(getenv("HOME")) + PATH_SEPARATOR_CHAR + ".pinmame" + PATH_SEPARATOR_CHAR;
          #else
             // FIXME implement a last resort or just ask the user to define its path setup in the settings ?
-            LOGE("PinMAME path is not defined.");
+            // DLW: quick hack, use local path ./pinmame
+            pinmamePath = "./pinmame/";
+            //LOGE("PinMAME path is not defined.");
          #endif
       }
       strncpy_s(const_cast<char*>(config.vpmPath), PINMAME_MAX_PATH, pinmamePath.c_str());
