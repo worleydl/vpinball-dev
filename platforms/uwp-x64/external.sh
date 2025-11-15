@@ -164,19 +164,16 @@ if [ "${BGFX_EXPECTED_SHA}" != "${BGFX_FOUND_SHA}" ]; then
    sed -i.bak 's/set_target_properties(bgfx PROPERTIES FOLDER "bgfx")/set_target_properties(bgfx PROPERTIES FOLDER "bgfx" OUTPUT_NAME "bgfx64")/g' cmake/bgfx/bgfx.cmake
    cmake -G "Visual Studio 17 2022" \
       -S. \
-      -DCMAKE_SYSTEM_NAME=WindowsStore \
-      -DCMAKE_SYSTEM_VERSION=10.0.19041 \
-      -DCMAKE_CXX_FLAGS="-D_CRT_SECURE_NO_WARNINGS" \
-      -DBGFX_LIBRARY_TYPE=SHARED \
+      -DBGFX_LIBRARY_TYPE=STATIC \
       -DBGFX_BUILD_TOOLS=OFF \
       -DBGFX_BUILD_EXAMPLES=OFF \
       -DBGFX_CONFIG_MULTITHREADED=ON \
       -DBGFX_CONFIG_MAX_FRAME_BUFFERS=256 \
       -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded \
-      -DCMAKE_CXX_FLAGS_RELEASE="//MD" \
-      -DCMAKE_C_FLAGS_RELEASE="//MD" \
-      -DCMAKE_CXX_FLAGS_DEBUG="//MDd" \
-      -DCMAKE_C_FLAGS_DEBUG="//MDd" \
+      -DCMAKE_CXX_FLAGS_RELEASE="//MT" \
+      -DCMAKE_C_FLAGS_RELEASE="//MT" \
+      -DCMAKE_CXX_FLAGS_DEBUG="//MTd" \
+      -DCMAKE_C_FLAGS_DEBUG="//MTd" \
       -B build
    cmake --build build --config ${BUILD_TYPE}
    cd ..
@@ -275,7 +272,6 @@ cp freeimage/freeimage/build/${BUILD_TYPE}/freeimage64.dll ../../../third-party/
 cp freeimage/freeimage/Source/FreeImage.h ../../../third-party/include
 
 cp bgfx/bgfx.cmake/build/cmake/bgfx/${BUILD_TYPE}/bgfx64.lib ../../../third-party/build-libs/uwp-x64
-cp bgfx/bgfx.cmake/build/cmake/bgfx/${BUILD_TYPE}/bgfx64.dll ../../../third-party/runtime-libs/uwp-x64
 cp -r bgfx/bgfx.cmake/bgfx/include/bgfx ../../../third-party/include/
 cp bgfx/bgfx.cmake/build/cmake/bimg/${BUILD_TYPE}/bimg64.lib ../../../third-party/build-libs/uwp-x64
 cp bgfx/bgfx.cmake/build/cmake/bimg/${BUILD_TYPE}/bimg_decode64.lib ../../../third-party/build-libs/uwp-x64
