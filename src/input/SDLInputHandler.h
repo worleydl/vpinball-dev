@@ -13,7 +13,12 @@ public:
       : m_pininput(pininput)
    {
       PLOGI << "SDL input handler registered";
+#ifndef _UWP
       if (!SDL_InitSubSystem(SDL_INIT_HAPTIC | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD))
+#else
+      // todo: [sdl-uwp] haptic locks up sdl, just have it filter flags or at least do something helpful
+      if (!SDL_InitSubSystem(SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD))
+#endif
       {
          PLOGE << "Failed to initialize joystick and haptic input with error: " << SDL_GetError();
       }
