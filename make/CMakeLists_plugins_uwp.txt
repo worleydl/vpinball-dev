@@ -1,0 +1,36 @@
+
+# plugin CMake file to be included in main project CMakelists
+# environment settings such as CMAKE_SYSTEM_NAME and CMAKE_OSX_SYSROOT should be already configured by root CMakeFile.txt
+
+set(BUILD_SHARED ON)
+set(BUILD_STATIC OFF)
+
+# TODO: I might look into getting static working on UWP for a cleaner bundle
+if(PluginPlatform STREQUAL "ios" OR PluginPlatform STREQUAL "ios-simulator" OR PluginPlatform STREQUAL "tvos" OR PluginPlatform STREQUAL "android")
+   set(BUILD_SHARED OFF)
+   set(BUILD_STATIC ON)
+endif()
+
+if(PluginPlatform STREQUAL "macos")
+   set(PLUGINS_DIR "$<TARGET_FILE_DIR:vpinball>/../Resources/plugins")
+else()
+   set(PLUGINS_DIR "$<TARGET_FILE_DIR:vpinball>/plugins")
+endif()
+
+# USB is locked down on UWP environments, and only one display available.
+# Many plugins arent compatible but networked DMD would be nice to support eventually
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_AlphaDMD.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_B2S.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_B2SLegacy.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_DMDUtil.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_DOF.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_FlexDMD.txt")
+include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_HelloScript.txt")
+include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_HelloWorld.txt")
+include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_PinMAME.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_PinupEvents.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_PUP.txt")
+include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_RemoteControl.txt")
+include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_ScoreView.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_Serum.txt")
+#include("${CMAKE_SOURCE_DIR}/make/CMakeLists_plugin_WMP.txt")
