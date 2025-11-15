@@ -55,6 +55,10 @@
 #include "lib/src/VPinballLib.h"
 #endif
 
+#ifdef _UWP
+#include "libuwp.h"
+#endif
+
 
 #if defined(ENABLE_BGFX)
 void RenderDevice::tBGFXCallback::fatal(const char* _filePath, uint16_t _line, bgfx::Fatal::Enum _code, const char* _str)
@@ -813,7 +817,11 @@ RenderDevice::RenderDevice(
    #elif BX_PLATFORM_ANDROID
    init.platformData.nwh = SDL_GetPointerProperty(SDL_GetWindowProperties(m_outputWnd[0]->GetCore()), SDL_PROP_WINDOW_ANDROID_WINDOW_POINTER, NULL);
    #elif BX_PLATFORM_WINDOWS
+   #ifndef _UWP
    init.platformData.nwh = m_outputWnd[0]->GetNativeHWND();
+   #else
+   init.platformData.nwh = uwp_GetWindowReference();
+   #endif
    #elif BX_PLATFORM_STEAMLINK
    init.platformData.ndt = wmInfo.info.vivante.display;
    init.platformData.nwh = wmInfo.info.vivante.window;
