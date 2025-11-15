@@ -572,6 +572,11 @@ string VPApp::GetPathFromArg(const string& arg, bool setCurrentPath)
       string path = trim_string(arg);
    #endif
 
+   #ifdef _UWP
+      // todo: code below junks up full paths on uwp, just return for now maybe cleanup later
+      return path;
+   #endif
+
    if (path[0] == '"') // Remove " "
       path = path.substr(1, path.size() - 1);
 
