@@ -8,7 +8,7 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="odolwa"
+    Name="vpx"
     Publisher="CN=odolwa"
     Version="1.0.0.0" />
 

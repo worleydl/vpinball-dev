@@ -206,6 +206,10 @@ string VPinball::GetDefaultPrefPath()
    char *szPrefPath = SDL_GetPrefPath("../..", "Documents");
    path = szPrefPath;
    SDL_free(szPrefPath);
+#elif defined(_UWP)
+   char *szPrefPath = SDL_GetPrefPath(NULL, "vpinball");
+   path = szPrefPath;
+   SDL_free(szPrefPath);
 #elif (defined(__APPLE__) && defined(TARGET_OS_TV) && TARGET_OS_TV) || defined(__STANDALONE_WIN__)
    char *szPrefPath = SDL_GetPrefPath(NULL, "Documents");
    path = szPrefPath;

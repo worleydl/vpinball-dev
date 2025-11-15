@@ -471,6 +471,8 @@ HRESULT BiffReader::Load(const std::function<bool(const int id, BiffReader *cons
 
       if (m_version > 30)
       {
+         if (m_bytesinrecordremaining < 0)
+            return E_FAIL;
 
          assert(m_bytesinrecordremaining >= 0);
 
