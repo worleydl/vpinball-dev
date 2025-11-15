@@ -6,7 +6,7 @@ int bootstrap(int, char**)
    char* args[] = {
 	  "himom.exe",
 	  "-play",
-	  "E:\\vpinball\\tables\\test.vpx",
+	  "E:\\vpinball\\tables\\sample.vpx",
    };
 
    return SDL_main(3, args);
