@@ -24,6 +24,12 @@
 #include <filesystem>
 #endif
 
+#ifdef _UWP
+#define SDL_MAIN_EXPORTED
+#define SDL_DECLSPEC __declspec(dllexport)
+#include "SDL3/SDL_main.h"
+#endif
+
 #if defined(__STANDALONE__) && defined(__linux__) && !defined(__ANDROID__)
 #include <csignal>
 
@@ -170,7 +176,11 @@ static void SetNVIDIAThreadOptimization(NvThreadOptimization threadedOptimizatio
 }
 #endif
 
+#ifndef _UWP
 extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR /*lpCmdLine*/, int /*nShowCmd*/)
+#else
+extern "C" int WINAPI ShimMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR /*lpCmdLine*/, int /*nShowCmd*/)
+#endif
 {
    #if defined(ENABLE_OPENGL) && !defined(__STANDALONE__)
    static NvThreadOptimization s_OriginalNVidiaThreadOptimization = NV_THREAD_OPTIMIZATION_NO_SUPPORT;
@@ -266,16 +276,22 @@ extern int g_argc;
 extern char **g_argv;
 
 #include <atlbase.h>
-class CMyModule : public ATL::CAtlExeModuleT<CMyModule>
+class CMyModule : public ATL::CAtlDllModuleT<CMyModule>
 {
 };
 CMyModule _AtlModule;
+
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
+    return _AtlModule.DllMain(dwReason, lpReserved);
+}
+
 int main(int argc, char** argv) {
    g_argc = argc;
    g_argv = argv;
 
-   HRESULT hr = _AtlModule.WinMain(0);
-   return WinMain(NULL, NULL, NULL, 0);
+   // todo: support dll/exe config for wine vbscript
+   //HRESULT hr = _AtlModule.WinMain(0);
+   return ShimMain(NULL, NULL, NULL, 0);
 }
 
 #endif

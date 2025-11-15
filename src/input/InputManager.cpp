@@ -12,7 +12,7 @@
 
 #include "input/SDLInputHandler.h"
 
-#ifndef __LIBVPINBALL__
+#if !defined(__LIBVPINBALL__) && !defined(_UWP)
    #include "input/OpenPinDevHandler.h"
 #endif
 
@@ -95,7 +95,7 @@ InputManager::InputManager()
    // Initialize device handlers
    m_inputHandlers.push_back(std::make_unique<SDLInputHandler>(*this));
    m_sdlHandler = static_cast<SDLInputHandler*>(m_inputHandlers.back().get());
-   #ifndef __LIBVPINBALL__
+   #if !defined(__LIBVPINBALL__) && !defined(_UWP)
       m_inputHandlers.push_back(std::make_unique<OpenPinDevHandler>(*this));
    #endif
 
