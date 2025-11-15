@@ -27,6 +27,7 @@ set(BinDeps
 
 	${CMAKE_SOURCE_DIR}/../experimental/libvbscript.dll
 
+	${CMAKE_SOURCE_DIR}/tmp-dep/libuwp.dll
 	${CMAKE_SOURCE_DIR}/tmp-dep/SDL364.dll
 
 	Package.appxmanifest
