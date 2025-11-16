@@ -652,6 +652,7 @@ static HRESULT set_object_site(script_ctx_t *ctx, IUnknown *obj)
     return hres;
 }
 
+extern HRESULT wine_CLSIDFromProgID(LPCOLESTR progid, LPCLSID riid);
 static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
 {
     IInternetHostSecurityManager *secmgr = NULL;
@@ -665,7 +666,12 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
     GUID guid;
     HRESULT hres;
 
+#if 0
     hres = CLSIDFromProgID(progid, &guid);
+#else
+    // todo: maybe delete since this is a no-op
+    hres = wine_CLSIDFromProgID(progid, &guid);
+#endif
     if(FAILED(hres))
         return NULL;
 
@@ -683,9 +689,12 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
             return NULL;
     }
 
+// DLW:  CLSIDFromProgID/CoGetClassObject are both no-ops currently, any reason to make these calls?
+#if 0
     hres = CoGetClassObject(&guid, CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER, NULL, &IID_IClassFactory, (void**)&cf);
     if(FAILED(hres))
         return NULL;
+#endif
 
 #ifndef __STANDALONE__
     hres = IClassFactory_QueryInterface(cf, &IID_IClassFactoryEx, (void**)&cfex);

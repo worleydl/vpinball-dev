@@ -230,4 +230,9 @@ HRESULT WINAPI wine_CoCreateInstanceEx(REFCLSID rclsid, IUnknown *outer, DWORD c
    return return_multi_qi(unk, count, results, TRUE);
 }
 
-
+// CLSIDFromProgID glitches out on UWP, so make sure to use wine impl
+WINOLE32API HRESULT WINAPI wine_CLSIDFromProgID(LPCOLESTR progid, LPCLSID riid);
+HRESULT WINAPI wine_CLSIDFromProgID(LPCOLESTR progid, CLSID *clsid)
+{
+   return 0;
+}
