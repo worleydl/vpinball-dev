@@ -388,7 +388,12 @@ void MsgPluginManager::ScanPluginFolder(const std::string& pluginDir, const std:
                if ((*it)->m_id == id)
                   it = m_plugins.erase(it);
             const std::string libraryFile = unquote(ini["libraries"s][libraryKey]);
+#ifndef _UWP
             const std::string libraryPath = entry.path().string() + PATH_SEPARATOR_CHAR + libraryFile;
+#else
+            // UWP has limited support for loading DLLs outside of the main path
+            const std::string libraryPath = libraryFile;
+#endif
             if (!std::filesystem::exists(libraryPath))
             {
                PLOGE << "Plugin " << id << " has an invalid library reference to a missing file for " << libraryKey << ": " << libraryFile;

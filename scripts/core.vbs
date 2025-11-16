@@ -427,7 +427,8 @@ Class cvpmTrough
 
 	Public Sub InitExit(aKicker, aDir, aForce)
 		If TypeName(aKicker) <> "Kicker" And TypeName(aKicker) <> "IKicker" Then
-			Err.Raise 17, "cvpmTrough.InitExit: Cannot use object of type '" & TypeName(aKicker) & "'."
+			' DLWHACK: reroute type check, (handle other case too)
+			'Err.Raise 17, "cvpmTrough.InitExit: Cannot use object of type '" & TypeName(aKicker) & "'."
 		End If
 
 		Set mExitKicker = aKicker
@@ -738,7 +739,7 @@ Class cvpmSaucer
 
 	Public Sub InitKicker(aKicker, aSw, aDir, aForce, aZForce)
 		If TypeName(aKicker) <> "Kicker" And TypeName(aKicker) <> "IKicker" Then
-			Err.Raise 17, "cvpmSaucer.InitKicker: Cannot use object of type '" & TypeName(aKicker) & "'."
+			'Err.Raise 17, "cvpmSaucer.InitKicker: Cannot use object of type '" & TypeName(aKicker) & "'."
 		End If
 
 		Set mKicker = aKicker

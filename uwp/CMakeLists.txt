@@ -20,8 +20,14 @@ add_executable(${PROJECT_NAME} WIN32
 
 set(BinDeps
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/VPinballX_BGFX64.dll
+	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/helloscript/plugin-helloscript64.dll
+	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/helloworld/plugin-helloworld64.dll
+	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/pinmame/plugin-pinmame64.dll
+	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/remote-control/plugin-remote-control64.dll
+	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/scoreview/plugin-scoreview64.dll
 
 	${CMAKE_SOURCE_DIR}/../third-party/runtime-libs/uwp-x64/freeimage64.dll
+	${CMAKE_SOURCE_DIR}/../third-party/runtime-libs/uwp-x64/pinmame64.dll
 	${CMAKE_SOURCE_DIR}/../third-party/runtime-libs/uwp-x64/SDL3_image64.dll
 	${CMAKE_SOURCE_DIR}/../third-party/runtime-libs/uwp-x64/SDL3_ttf64.dll
 
