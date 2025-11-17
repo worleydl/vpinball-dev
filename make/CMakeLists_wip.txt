@@ -60,20 +60,15 @@ target_compile_definitions(vbscript PRIVATE
 )
 
 target_compile_options(vbscript PUBLIC
-   $<$<CONFIG:RELEASE>:/Ob2>
-   $<$<CONFIG:RELEASE>:/O2>
-   $<$<CONFIG:RELEASE>:/Oi>
-   $<$<CONFIG:RELEASE>:/fp:fast>
-   $<$<CONFIG:RELEASE>:/fp:except->
-   $<$<CONFIG:RELEASE>:/Ot>
-   $<$<CONFIG:RELEASE>:/GF>
-   $<$<CONFIG:RELEASE>:/GS->
-   $<$<CONFIG:RELEASE>:/Gy>
-   $<$<CONFIG:RELEASE>:/GR>
-   $<$<CONFIG:RELEASE>:/Oy>
-   $<$<CONFIG:RELEASE>:/GT>
-   $<$<CONFIG:RELEASE>:/GL>
-   $<$<CONFIG:RELEASE>:/w44005>
+    $<$<CONFIG:RELEASE>:
+        -O2
+        -funroll-loops
+        -ffast-math
+        -fomit-frame-pointer
+        -fno-exceptions
+        -fstrict-aliasing
+        -Wall
+    >
 )
 
 target_link_libraries(vbscript
