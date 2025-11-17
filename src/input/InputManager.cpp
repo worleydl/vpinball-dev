@@ -701,7 +701,9 @@ void InputManager::CreateInputActions()
             && (g_pplayer->m_time_msec > 1000) // Game has been played at least 1 second
             && ((msec() - m_exitPressTimestamp) > m_exitAppPressLengthMs)) // Exit button has been pressed continuously long enough
          { // Close app if pressed long enough
+         #ifndef _UWP // unsure why this an issue for a quick esc press but it's always exiting. msec resolution too high?
             g_pvp->QuitPlayer(Player::CloseState::CS_CLOSE_APP);
+         #endif
          }
          else if (g_pplayer->m_liveUI->IsOpened())
          {
