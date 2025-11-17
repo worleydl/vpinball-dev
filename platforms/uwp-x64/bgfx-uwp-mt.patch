@@ -1,0 +1,21 @@
+--- bgfx/src/dxgi.cpp	2025-11-17 12:51:02.313130500 -0500
++++ bgfx/src/dxgi.cpp	2025-11-17 12:50:30.210494900 -0500
+@@ -483,7 +483,8 @@
+ 		scd.AlphaMode   = _scd.alphaMode;
+ 		scd.Flags       = _scd.flags;
+ 
+-#if BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
++// DLW: Patch in swapchain fix/tearing removal to provide /MT compat
++#if 0 //BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
+ 		IDXGIFactory5* factory5;
+ 		hr = m_factory->QueryInterface(IID_IDXGIFactory5, (void**)&factory5);
+ 
+@@ -715,7 +716,7 @@
+ 
+ 		uint32_t scdFlags = _scd.flags;
+ 
+-#if BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
++#if 0 // BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
+ 		IDXGIFactory5* factory5;
+ 		hr = m_factory->QueryInterface(IID_IDXGIFactory5, (void**)&factory5);
+ 

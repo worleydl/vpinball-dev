@@ -420,8 +420,13 @@ void LiveUI::NewFrame()
       }
    }
 
+#ifndef _UWP
    // We implement our own keyboard navigation using flipper keys
    io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableKeyboard;
+#else
+   // uwp is missing flipper keys, support keyboard + gamepad
+   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableGamepad;
+#endif
 
    ImGui::NewFrame();
 }
