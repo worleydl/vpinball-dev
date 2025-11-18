@@ -2,10 +2,17 @@
 #include "SDL3/SDL.h"
 #include "SDL3/SDL_main.h"
 
+#include "bootmenu.h"
+#include "libuwp.h"
+
 int bootstrap(int, char**)
 {
    // todo: This should be forced in the SDL3-UWP build
    SDL_SetHint(SDL_HINT_JOYSTICK_WGI, "true");
+
+   int x, y;
+   uwp_GetScreenSize(&x, &y);
+   bootmenu::BootSelect(uwp_GetWindowReference(), x, y);
 
    char* args[] = {
 	  "himom.exe",
