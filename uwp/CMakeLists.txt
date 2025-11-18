@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
+include(FetchContent)
 
 # Setup UWP platform
 set(CMAKE_SYSTEM_NAME WindowsStore)
@@ -14,12 +15,35 @@ endif()
 project(vpinball-uwp LANGUAGES CXX)
 set_directory_properties(PROPERTIES VS_STARTUP_PROJECT ${PROJECT_NAME})
 
+# Grab a fresh imgui (vpx project is slimmed down, we want basic SDL_renderer for launch menu)
+FetchContent_Declare(imgui
+	GIT_REPOSITORY https://github.com/ocornut/imgui.git
+	GIT_TAG 23bd697f053bd5cf24601ee3f29572c0a645bd8f
+)
+FetchContent_MakeAvailable(imgui)
+
+set(IMGUI_HOME ${CMAKE_BINARY_DIR}/_deps/imgui-src/)
+
 add_executable(${PROJECT_NAME} WIN32
-	main.cpp
+	src/bootmenu.cpp
+	src/bootmenu.h
+	src/dx11glue.cpp
+	src/dx11glue.h
+	src/main.cpp
+
+	# imgui for basic launcher
+	${IMGUI_HOME}/imgui.cpp
+	${IMGUI_HOME}/imgui_draw.cpp
+	${IMGUI_HOME}/imgui_widgets.cpp
+	${IMGUI_HOME}/imgui_tables.cpp
+
+	${IMGUI_HOME}/backends/imgui_impl_sdl3.cpp
+	${IMGUI_HOME}/backends/imgui_impl_dx11.cpp
 )
 
 set(BinDeps
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/VPinballX_BGFX64.dll
+
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/helloscript/plugin-helloscript64.dll
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/helloworld/plugin-helloworld64.dll
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins/pinmame/plugin-pinmame64.dll
@@ -67,14 +91,15 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
+	${IMGUI_HOME}
 	${CMAKE_SOURCE_DIR}/tmp-dep/include
 )
 
 set(BinLibs
 	${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/vpinball.lib
+	${CMAKE_SOURCE_DIR}/tmp-dep/libuwp.lib
 	${CMAKE_SOURCE_DIR}/tmp-dep/SDL364.lib
 
-	dxguid.lib
 	WindowsApp.lib
 	OneCore.lib
 )
