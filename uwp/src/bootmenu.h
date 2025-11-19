@@ -4,7 +4,7 @@
 
 namespace bootmenu
 {
-	static std::string g_selectedPath;
+	extern std::string g_selectedPath;
 
 	void BootSelect(void* wnd, int w, int h);
 }
