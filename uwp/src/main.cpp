@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include "SDL3/SDL.h"
 #include "SDL3/SDL_main.h"
+#include <string>
+#include <vector>
 
 #include "bootmenu.h"
 #include "libuwp.h"
@@ -14,13 +16,15 @@ int bootstrap(int, char**)
    uwp_GetScreenSize(&x, &y);
    bootmenu::BootSelect(uwp_GetWindowReference(), x, y);
 
-   char* args[] = {
-	  "himom.exe",
-	  "-play",
-	  "E:\\vpinball\\tables\\test.vpx",
-   };
+   std::string exe_name = "vpinball-uwp.exe";
+   std::string param = "-play";
 
-   return SDL_main(3, args);
+   std::vector<char*> args;
+   args.push_back(exe_name.data());
+   args.push_back(param.data());
+   args.push_back(bootmenu::g_selectedPath.data());
+
+   return SDL_main(args.size(), args.data());
 }
 
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR argv, int argc) {
