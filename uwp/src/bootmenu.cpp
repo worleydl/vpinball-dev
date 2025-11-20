@@ -90,9 +90,11 @@ namespace bootmenu
 		ImGui_ImplDX11_Init(dx11glue::g_pd3dDevice, dx11glue::g_pd3dDeviceContext);
 
 		ImGuiIO& io = ImGui::GetIO();
+		io.DisplaySize.x = w;
+		io.DisplaySize.y = h;
+
 		io.FontGlobalScale = h / 720.0f;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad | ImGuiConfigFlags_NavEnableKeyboard;
-
 
 		bool running = true;
 		while (running)
@@ -112,6 +114,7 @@ namespace bootmenu
 
 			// Make window take up entire screen, no styles
 			ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+			ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiCond_FirstUseEver);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 			{
 				ImGui::Begin("Table Selection", 0, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);

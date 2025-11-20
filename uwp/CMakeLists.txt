@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(AssetDeploy)
 include(FetchContent)
 
 # Setup UWP platform
@@ -108,20 +110,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${BinLibs})
 set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINDOWS_TARGET_PLATFORM_MIN_VERSION 10.0.19041.0)
 
 # Data deployment
-add_custom_command(TARGET vpinball-uwp POST_BUILD
-   COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:vpinball-uwp>/user"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../src/assets" "$<TARGET_FILE_DIR:vpinball-uwp>/assets"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../scripts" "$<TARGET_FILE_DIR:vpinball-uwp>/scripts"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../tables" "$<TARGET_FILE_DIR:vpinball-uwp>/tables"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../docs" "$<TARGET_FILE_DIR:vpinball-uwp>/docs"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins" "$<TARGET_FILE_DIR:vpinball-uwp>/plugins"
-
-   # annoying but slightly more readable than glob recurse, vs2022 doesn't auto copy content from the debug folder to app bundle
-   COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:vpinball-uwp>/Appx/user"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../src/assets" "$<TARGET_FILE_DIR:vpinball-uwp>/AppX/assets"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../scripts" "$<TARGET_FILE_DIR:vpinball-uwp>/AppX/scripts"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../tables" "$<TARGET_FILE_DIR:vpinball-uwp>/AppX/tables"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../docs" "$<TARGET_FILE_DIR:vpinball-uwp>/AppX/docs"
-   COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CMAKE_SOURCE_DIR}/../build_dll/${CMAKE_BUILD_TYPE}/plugins" "$<TARGET_FILE_DIR:vpinball-uwp>/Appx/plugins"
-
-)
+set(DEPLOY_ROOT ${CMAKE_SOURCE_DIR}/..)
+uwp_pkg(${PROJECT_NAME} ${DEPLOY_ROOT}/src/assets "assets")
+uwp_pkg(${PROJECT_NAME} ${DEPLOY_ROOT}/scripts "scripts")
+uwp_pkg(${PROJECT_NAME} ${DEPLOY_ROOT}/tables "tables")
+uwp_pkg(${PROJECT_NAME} ${DEPLOY_ROOT}/docs "docs")
+uwp_pkg(${PROJECT_NAME} ${DEPLOY_ROOT}/build_dll/${CMAKE_BUILD_TYPE}/plugins "plugins")
