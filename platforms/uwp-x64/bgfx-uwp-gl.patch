@@ -1,0 +1,125 @@
+--- bgfx/src/glcontext_wgl.h	2025-11-20 14:35:40.714438400 -0500
++++ bgfx/src/glcontext_wgl.h	2025-11-20 11:26:08.180388200 -0500
+@@ -16,6 +16,9 @@
+ typedef BOOL (APIENTRYP PFNWGLMAKECURRENTPROC) (HDC hdc, HGLRC hglrc);
+ typedef HGLRC (APIENTRYP PFNWGLCREATECONTEXTPROC) (HDC hdc);
+ typedef BOOL  (APIENTRYP PFNWGLDELETECONTEXTPROC) (HGLRC hglrc);
++// UWP MOD
++typedef BOOL (APIENTRYP PFNWGLSWAPBUFFERS)(HDC);
++// END UWP MOD
+ //
+ typedef GLenum (APIENTRYP PFNGLGETERRORPROC) (void);
+ typedef void (APIENTRYP PFNGLREADPIXELSPROC) (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels);
+--- bgfx/src/glcontext_wgl.cpp	2025-11-20 14:35:40.697437700 -0500
++++ bgfx/src/glcontext_wgl.cpp	2025-11-20 13:26:26.338562900 -0500
+@@ -5,6 +5,10 @@
+ 
+ #include "bgfx_p.h"
+ 
++// UWP MOD
++extern "C" __declspec(dllimport) void* uwp_GetWindowReference();
++extern "C" __declspec(dllimport) void uwp_SetScreenSize(int, int);
++
+ #if (BGFX_CONFIG_RENDERER_OPENGLES|BGFX_CONFIG_RENDERER_OPENGL)
+ #	include "renderer_gl.h"
+ 
+@@ -21,6 +25,10 @@
+ 	PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+ 	PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+ 
++	// UWP MOD
++	PFNWGLSWAPBUFFERS wglSwapBuffers;
++	// END UWP MOD
++
+ #	define GL_IMPORT(_optional, _proto, _func, _import) _proto _func
+ #	include "glimports.h"
+ #	undef GL_IMPORT
+@@ -55,7 +63,9 @@
+ 
+ 		void swapBuffers()
+ 		{
+-			SwapBuffers(m_hdc);
++			// UWP MOD
++			//SwapBuffers(m_hdc);
++			wglSwapBuffers(m_hdc);
+ 		}
+ 
+ 		HWND  m_hwnd;
+@@ -77,6 +87,8 @@
+ 		pfd.cStencilBits = 8;
+ 		pfd.iLayerType = PFD_MAIN_PLANE;
+ 
++		// UWP MOD: Pixel format setup requires more hackery, use the uwp gallium default
++		/*
+ 		int pixelFormat = ChoosePixelFormat(_hdc, &pfd);
+ 		BGFX_FATAL(0 != pixelFormat, Fatal::UnableToInitialize, "ChoosePixelFormat failed!");
+ 
+@@ -98,6 +110,8 @@
+ 		int result;
+ 		result = SetPixelFormat(_hdc, pixelFormat, &pfd);
+ 		BGFX_FATAL(0 != result, Fatal::UnableToInitialize, "SetPixelFormat failed!");
++		*/
++		int result;
+ 
+ 		HGLRC context = wglCreateContext(_hdc);
+ 		BGFX_FATAL(NULL != context, Fatal::UnableToInitialize, "wglCreateContext failed!");
+@@ -123,6 +137,10 @@
+ 				"be intentional when GL context is created by the user."
+ 			);
+ 
++		// UWP MOD
++		wglSwapBuffers = (PFNWGLSWAPBUFFERS)bx::dlsym(m_opengl32dll, "wglSwapBuffers");
++		// END UWP MOD
++
+ 		if (NULL != g_platformData.nwh && NULL != g_platformData.context )
+ 		{
+ 			// user has provided a context and a window
+@@ -150,6 +168,8 @@
+ 			wglDeleteContext = bx::dlsym<PFNWGLDELETECONTEXTPROC>(m_opengl32dll, "wglDeleteContext");
+ 			BGFX_FATAL(NULL != wglDeleteContext, Fatal::UnableToInitialize, "Failed get wglDeleteContext.");
+ 
++			// UWP MOD
++			/*
+ 			m_hdc = GetDC( (HWND)g_platformData.nwh);
+ 			BGFX_FATAL(NULL != m_hdc, Fatal::UnableToInitialize, "GetDC failed!");
+ 
+@@ -158,6 +178,7 @@
+ 			// An application can only set the pixel format of a window one time.
+ 			// Once a window's pixel format is set, it cannot be changed.
+ 			// MSDN: https://web.archive.org/web/20190207230357/https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/nf-wingdi-setpixelformat
++			
+ 			HWND hwnd = CreateWindowA("STATIC"
+ 				, ""
+ 				, WS_POPUP|WS_DISABLED
+@@ -171,7 +192,10 @@
+ 				, 0
+ 				);
+ 
+-			HDC hdc = GetDC(hwnd);
++			//HDC hdc = GetDC(hwnd);
++			*/
++			HDC hdc = static_cast<HDC>(uwp_GetWindowReference()); 
++			m_hdc = hdc; 
+ 			BGFX_FATAL(NULL != hdc, Fatal::UnableToInitialize, "GetDC failed!");
+ 
+ 			HGLRC context = createContext(hdc);
+@@ -278,7 +302,7 @@
+ 
+ 			wglMakeCurrent(NULL, NULL);
+ 			wglDeleteContext(context);
+-			DestroyWindow(hwnd);
++			// DestroyWindow(hwnd); // uwpmod
+ 
+ 			if (NULL == m_context)
+ 			{
+@@ -362,7 +386,9 @@
+ 		{
+ 			if (NULL != g_platformData.nwh)
+ 			{
+-				SwapBuffers(m_hdc);
++				// UWP MOD
++				//SwapBuffers(m_hdc);
++				wglSwapBuffers(m_hdc);
+ 			}
+ 		}
+ 		else
