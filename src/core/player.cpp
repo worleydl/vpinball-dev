@@ -51,6 +51,10 @@
 
 #include "utils/ushock_output.h"
 
+#ifdef _UWP
+#include "libuwp.h"
+#endif
+
 // MSVC Concurrency Viewer support
 // This requires to add the MSVC Concurrency SDK to the project
 //#define MSVC_CONCURRENCY_VIEWER
@@ -268,6 +272,12 @@ Player::Player(PinTable *const editor_table, PinTable *const live_table, const i
    try
    {
       m_renderer = new Renderer(m_ptable, m_playfieldWnd, m_videoSyncMode, stereo3D);
+      #ifdef _UWP
+      // mesa gallium needs a hint for the framebuffer size otherwise it poststamps instead of stretching
+      int uwp_x, uwp_y;
+      m_renderer->GetRenderSize(uwp_x, uwp_y);
+      uwp_SetScreenSize(uwp_x, uwp_y);
+      #endif
    }
    catch (HRESULT hr)
    {
@@ -1524,6 +1534,10 @@ void Player::MultithreadedGameLoop()
    {
       // Continuously process input, synchronize with emulation and step physics to keep latency low
       UpdateGameLogic();
+
+      #ifdef _UWP
+      uwp_ProcessEvents();
+      #endif
 
       // If rendering thread is ready, push a new frame as soon as possible
       if (!m_renderer->m_renderDevice->m_framePending && m_renderer->m_renderDevice->m_frameMutex.try_lock())
