@@ -161,5 +161,6 @@ namespace bootmenu
 
 		dx11glue::CleanupDeviceD3D();
 		SDL_DestroyWindow(window);
+		SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
 	}
 }
