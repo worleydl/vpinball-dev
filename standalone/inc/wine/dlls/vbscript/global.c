@@ -666,7 +666,7 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
     GUID guid;
     HRESULT hres;
 
-#if 0
+#ifndef __MSYSWINE__
     hres = CLSIDFromProgID(progid, &guid);
 #else
     // todo: maybe delete since this is a no-op
@@ -690,7 +690,7 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
     }
 
 // DLW:  CLSIDFromProgID/CoGetClassObject are both no-ops currently, any reason to make these calls?
-#if 0
+#ifndef __MSYSWINE__
     hres = CoGetClassObject(&guid, CLSCTX_INPROC_SERVER|CLSCTX_LOCAL_SERVER, NULL, &IID_IClassFactory, (void**)&cf);
     if(FAILED(hres))
         return NULL;
@@ -712,10 +712,13 @@ static IUnknown *create_object(script_ctx_t *ctx, const WCHAR *progid)
         hres = Dictionary_CreateInstance(cf, NULL, &IID_IUnknown, (void**)&obj);
     }
     else {
-	// DLW: [HACK] should I setup a shim area that the exe and wine can sync up?
-	// shortcut to CLASS_E_CLASSNOTAVAILABLE, missing helpful message
-        //hres = external_create_object(progid, cf, (IUnknown*)&obj);
-	hres = CLASS_E_CLASSNOTAVAILABLE;
+    #ifndef __MSYSWINE__
+        hres = external_create_object(progid, cf, (IUnknown*)&obj);
+    #else
+        // DLW: [HACK] should I setup a shim area that the exe and wine can sync up?
+        // shortcut to CLASS_E_CLASSNOTAVAILABLE, missing helpful message
+        hres = CLASS_E_CLASSNOTAVAILABLE;
+    #endif
     }
 #endif
     if(FAILED(hres))
