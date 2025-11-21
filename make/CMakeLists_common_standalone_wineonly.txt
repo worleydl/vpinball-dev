@@ -5,7 +5,7 @@
 include("${CMAKE_SOURCE_DIR}/make/CMakeLists_common.txt")
 
 # DLW: Rolling the dice here, comment out collisions with mingw impl of same functions
-# Also introduce winedbg, slimmed down wine.c (preproc this eventually)
+# Also introduce wineslim, slimmed down wine.c (preproc this eventually)
 set(WINE_SOURCES
    standalone/inc/wine/dlls/atl/atl.c
    #standalone/inc/wine/dlls/oleaut32/oleaut.c
@@ -29,7 +29,7 @@ set(WINE_SOURCES
    standalone/inc/wine/dlls/scrrun/scrrun.c
    #standalone/inc/wine/dlls/kernelbase/locale.c
    #standalone/inc/wine/wine.c
-   standalone/inc/wine/winedbg.c
+   standalone/inc/wine/wineslim.c
 )
 
 set_source_files_properties(${WINE_SOURCES} PROPERTIES
