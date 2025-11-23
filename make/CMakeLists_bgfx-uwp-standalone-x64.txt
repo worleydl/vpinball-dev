@@ -42,7 +42,7 @@ target_include_directories(vpinball PUBLIC
    media
    pin
    src
-   src/plugins
+   plugins
 )
 
 # todo: review
