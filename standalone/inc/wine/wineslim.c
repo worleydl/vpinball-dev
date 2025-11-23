@@ -236,3 +236,9 @@ HRESULT WINAPI wine_CLSIDFromProgID(LPCOLESTR progid, CLSID *clsid)
 {
    return 0;
 }
+
+// local def for no-op path alloc combine
+HRESULT PathAllocCombine(const WCHAR *path1, const WCHAR *path2, DWORD flags, WCHAR **out)
+{
+   return 0;
+}

@@ -34,7 +34,12 @@ typedef enum PATHCCH_OPTIONS
 #define PATHCCH_MAX_CCH 0x8000
 
 WINBASEAPI HRESULT WINAPI PathAllocCanonicalize(const WCHAR *path_in, DWORD flags, WCHAR **path_out);
+#ifndef __MSYSWINE__
 WINBASEAPI HRESULT WINAPI PathAllocCombine(const WCHAR *path1, const WCHAR *path2, DWORD flags, WCHAR **out);
+#else
+// DLW: Need a local def for slimwine
+HRESULT WINAPI PathAllocCombine(const WCHAR *path1, const WCHAR *path2, DWORD flags, WCHAR **out);
+#endif
 WINBASEAPI HRESULT WINAPI PathCchAddBackslash(WCHAR *path, SIZE_T size);
 WINBASEAPI HRESULT WINAPI PathCchAddBackslashEx(WCHAR *path, SIZE_T size, WCHAR **end, SIZE_T *remaining);
 WINBASEAPI HRESULT WINAPI PathCchAddExtension(WCHAR *path, SIZE_T size, const WCHAR *extension);
