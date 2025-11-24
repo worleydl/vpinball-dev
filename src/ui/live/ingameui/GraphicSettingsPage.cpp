@@ -75,7 +75,7 @@ void GraphicSettingsPage::BuildPage()
       vector<string> renderers;
       for (int i = 0; i < nRendererSupported; i++)
          if (supportedRenderers[i] != bgfx::RendererType::Noop)
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(_UWP)
             if (supportedRenderers[i] != bgfx::RendererType::Direct3D12)
 #endif
                renderers.push_back(bgfxRendererNames[supportedRenderers[i]]);

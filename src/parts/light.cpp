@@ -494,7 +494,7 @@ void Light::Render(const unsigned int renderMask)
    TRACE_FUNCTION();
 
    // FIXME BGFX DX12 will crash on this
-   #ifdef ENABLE_BGFX
+   #if ENABLE_BGFX && !_UWP
       if (bgfx::getRendererType() == bgfx::RendererType::Direct3D12)
          return;
    #endif

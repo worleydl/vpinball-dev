@@ -19,3 +19,48 @@
  		IDXGIFactory5* factory5;
  		hr = m_factory->QueryInterface(IID_IDXGIFactory5, (void**)&factory5);
  
+--- bgfx/src/renderer_d3d12.cpp	2025-11-16 12:00:18.000000000 -0500
++++ bgfx/src/renderer_d3d12.cpp	2025-11-24 17:59:20.220567700 -0500
+@@ -893,7 +893,7 @@
+ 					{
+ 						if (_init.debug)
+ 						{
+-#if BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
++#if (BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT) && 0
+ 							debug0->EnableDebugLayer();
+ 
+ 							{
+@@ -3178,6 +3178,8 @@
+ 
+ 			m_pipelineStateCache.add(hash, pso);
+ 
++			// DLW: GetCachedBlob triggers device removal on xbox.
++			#if 0
+ 			ID3DBlob* blob;
+ 			HRESULT hr = pso->GetCachedBlob(&blob);
+ 			if (SUCCEEDED(hr) )
+@@ -3189,6 +3191,7 @@
+ 
+ 				DX_RELEASE(blob, 0);
+ 			}
++			#endif
+ 
+ 			if (NULL != cachedData)
+ 			{
+@@ -3466,6 +3469,8 @@
+ 				release(temp);
+ 			}
+ 
++			// [uwp] more GetCachedBlob removal
++			#if 0
+ 			ID3DBlob* blob;
+ 			HRESULT hr = pso->GetCachedBlob(&blob);
+ 			if (SUCCEEDED(hr) )
+@@ -3477,6 +3482,7 @@
+ 
+ 				DX_RELEASE(blob, 0);
+ 			}
++			#endif
+ 
+ 			if (NULL != cachedData)
+ 			{
